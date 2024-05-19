@@ -1,0 +1,21 @@
+cmake-build-debug/
+cmake-build-release/
+.DS_Store
+.project
+.patch
+.idea/
+.vscode/
+.vs/
+build/
+build*/
+*.code-workspace
+node_modules/
+# package.json
+package-lock.json
+gen_change_log.sh
+# *.pdb
+*.json
+.history/
+*.si4project/
+Makefile*
+scripts/
