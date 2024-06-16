@@ -16,7 +16,7 @@ add_subdirectory(3party)
 
 ## set modules source dir
 set(MODULES_SOURCE_DIR
-    ${YOLO_SOURCE_DIR}/util
+    ${YOLO_SOURCE_DIR}
     )
 
 set(yolo_include_dirs   
@@ -38,32 +38,12 @@ foreach(file_path ${MODULES_SOURCE_DIR})
     set(global_source ${global_source} ${file_source})
 endforeach()
 
-foreach(file ${global_source})
-    # split mnn files
-    string(REGEX MATCH "${YOLO_DIR}/.*/mnn/.*" mnn_files ${file})
-    if (mnn_files)
-        set(mnn_source ${mnn_source} ${mnn_files})
-    endif()
-endforeach()
-
-if(NOT BUILD_WITH_MNN)
-    list(REMOVE_ITEM global_source ${mnn_source})
-endif()
-
 set(yolo_dependent_libs mnn ${OpenCV_LIBS})
 
 message(STATUS "OpenCV_DIR=${OpenCV_DIR}")
 message(STATUS "OpenCV_LIBS=${OpenCV_LIBS}")
 message(STATUS "OpenCV_INCLUDE_DIRS=${OpenCV_INCLUDE_DIRS}")
 
-## compile options
-set(compile_options "")
-
-if(LINUX)
-    list(APPEND compile_options PRIVATE -Wall -Wextra)
-endif()
-
-## build target bva
 if(WIN32) 
     message(STATUS "platform: windows")
     set(windows_source ${global_source})
@@ -84,3 +64,18 @@ elseif(ANDROID)
         ${android_source}
         )
 endif()
+
+if (MSVC)
+    # compile static lib, surrpot Winwows
+    add_library(yolov8 STATIC ${yolo_source})
+else()
+    # compile dynamic so, support Linux/Mac
+    add_library(yolov8 SHARED ${yolo_source})
+endif()
+
+target_link_libraries(yolov8 PUBLIC ${yolo_dependent_libs})
+target_include_directories(yolov8 PUBLIC 
+    "$<BUILD_INTERFACE:${yolo_include_dirs}>"
+    "$<INSTALL_INTERFACE:include>"
+)
+ 
