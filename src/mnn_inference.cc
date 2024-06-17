@@ -70,7 +70,7 @@ std::vector<ObjectDetection> MNNInference::MNNRunYolov8Detect(const cv::Mat &src
     }
 
     float rectConfidenceThreshold = 0.5;
-    float iouThreshold = 0.1;
+    float iouThreshold = 0.6;
 
     Yolov8DetectPostprocess(boxes, iouThreshold, rectConfidenceThreshold);
     std::vector<ObjectDetection> results;

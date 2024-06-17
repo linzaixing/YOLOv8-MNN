@@ -14,7 +14,7 @@ using namespace cv;
 
 int main(int argc, const char* argv[]) {
     const String keys =
-        "{help h usage ?   |      | print this message   }"
+        "{help h usage ?   |      | print this message }"
         "{img   i          |<none>| img path }"
         "{model  m         |<none>| model path}";
     CommandLineParser parser(argc, argv, keys);
@@ -48,63 +48,6 @@ int main(int argc, const char* argv[]) {
     int engine_type = 0;
 
     std::shared_ptr<MNNInference> mnn_inference = std::make_shared<MNNInference>(model_path, new_shape, engine_type);
-
-    // // load MNN model
-    // auto mnn_net_ = std::shared_ptr<MNN::Interpreter>(MNN::Interpreter::createFromFile(model_path.c_str()));
-    // MNN::ScheduleConfig config;
-    // if (engine_type == 0) {
-    //     config.type = MNN_FORWARD_CPU;
-    //     config.numThread = 4;
-    // } else if (engine_type == 1) {
-    //     config.type = MNN_FORWARD_OPENCL;
-    // } else {
-    //     printf("current engine type not support!");
-    //     return -1;
-    // }
-
-    // // create session
-    // auto session = mnn_net_->createSession(config); 
-    // auto input_tensor = mnn_net_->getSessionInput(session, "images");
-    // printf("input b:%d, w:%d, h:%d, c:%d\n", input_tensor->batch(), input_tensor->width(), input_tensor->height(), input_tensor->channel());
-    
-    // std::vector<std::string> det_coco_classes{
-    //     "person",         "bicycle",    "car",           "motorcycle",    "airplane",     "bus",           "train",
-    //     "truck",          "boat",       "traffic light", "fire hydrant",  "stop sign",    "parking meter", "bench",
-    //     "bird",           "cat",        "dog",           "horse",         "sheep",        "cow",           "elephant",
-    //     "bear",           "zebra",      "giraffe",       "backpack",      "umbrella",     "handbag",       "tie",
-    //     "suitcase",       "frisbee",    "skis",          "snowboard",     "sports ball",  "kite",          "baseball bat",
-    //     "baseball glove", "skateboard", "surfboard",     "tennis racket", "bottle",       "wine glass",    "cup",
-    //     "fork",           "knife",      "spoon",         "bowl",          "banana",       "apple",         "sandwich",
-    //     "orange",         "broccoli",   "carrot",        "hot dog",       "pizza",        "donut",         "cake",
-    //     "chair",          "couch",      "potted plant",  "bed",           "dining table", "toilet",        "tv",
-    //     "laptop",         "mouse",      "remote",        "keyboard",      "cell phone",   "microwave",     "oven",
-    //     "toaster",        "sink",       "refrigerator",  "book",          "clock",        "vase",          "scissors",
-    //     "teddy bear",     "hair drier", "toothbrush"};
-
-    // // create temp Tensor
-    // MNN::Tensor givenTensor(new MNN::Tensor(input_tensor, MNN::Tensor::CAFFE));
-
-    // // write data to input_tensor
-    // memcpy(givenTensor.host<float>(), (float *)src_nchw.data, sizeof(float) * src_nchw.rows * src_nchw.cols * src_nchw.channels());
-
-    // // copy to session
-    // input_tensor->copyFromHostTensor(&givenTensor);
-
-    // // run session
-    // int error_code = mnn_net_->runSession(session); 
-    // if (error_code) {
-    //     return -1;
-    // }
-
-    // // get output data from tensor
-    // MNN::Tensor *feature = mnn_net_->getSessionOutput(session, "output0");
-
-    // MNN::Tensor outputUser(feature, feature->getDimensionType());
-    // feature->copyToHostTensor(&outputUser);
-    // printf("outputUser b:%d, w:%d, h:%d, c:%d\n", outputUser.batch(), outputUser.width(), outputUser.height(), outputUser.channel());
-
-    // float *data = outputUser.host<float>();
-
     
     std::vector<ObjectDetection> results = mnn_inference->MNNRunYolov8Detect(img, new_shape);
 

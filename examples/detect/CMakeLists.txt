@@ -9,6 +9,3 @@ set(PROJECT_SOURCES
 add_executable(yolov8_detect ${PROJECT_SOURCES})
 target_link_libraries(yolov8_detect yolov8)
 
-add_executable(image_fusion image_fusion.cpp)
-target_link_libraries(image_fusion yolov8)
-
