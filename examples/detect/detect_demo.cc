@@ -15,8 +15,8 @@ using namespace cv;
 int main(int argc, const char* argv[]) {
     const String keys =
         "{help h usage ?   |      | print this message }"
-        "{img   i          |<none>| img path }"
-        "{model  m         |<none>| model path}";
+        "{img   i          |      | img path }"
+        "{model  m         |      | model path}";
     CommandLineParser parser(argc, argv, keys);
     if (!parser.check()) {
         parser.printErrors();
@@ -34,9 +34,10 @@ int main(int argc, const char* argv[]) {
     std::string img_path = parser.get<String>("img");
     std::string model_path = parser.get<String>("model");
 
-    cv::Mat img = cv::imread(img_path, cv::IMREAD_UNCHANGED);
+    cv::Mat img = cv::imread(img_path);
     if (img.empty()) {
         printf("input image is empty!\n");
+        printf("img_path: %s\n", img_path.c_str());
         return -1;
     }
 

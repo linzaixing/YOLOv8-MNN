@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(YOLO_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(YOLO_INCLUDE_DIR ${YOLO_DIR}/include)
 
 file(GLOB_RECURSE public_include_files
@@ -16,7 +16,7 @@ add_subdirectory(3party)
 
 ## set modules source dir
 set(MODULES_SOURCE_DIR
-    ${YOLO_SOURCE_DIR}
+    ${SOURCE_DIR}
     )
 
 set(yolo_include_dirs   
@@ -47,30 +47,31 @@ message(STATUS "OpenCV_INCLUDE_DIRS=${OpenCV_INCLUDE_DIRS}")
 if(WIN32) 
     message(STATUS "platform: windows")
     set(windows_source ${global_source})
-    set(yolo_source
+    set(file_source
         ${windows_source}
         ${public_include_files}
         )
-elseif(LINUX)
+elseif(UNIX AND NOT APPLE)
+    # LINUX var exists only in CMake 3.25+, use UNIX for compatibility
     message(STATUS "platform: linux")
     set(linux_source ${global_source})
-    set(yolo_source
+    set(file_source
         ${linux_source}
         )
 elseif(ANDROID)
     message(STATUS "platform: android")
     set(android_source ${global_source})
-    set(yolo_source
+    set(file_source
         ${android_source}
         )
 endif()
 
 if (MSVC)
     # compile static lib, surrpot Winwows
-    add_library(yolov8 STATIC ${yolo_source})
+    add_library(yolov8 STATIC ${file_source})
 else()
     # compile dynamic so, support Linux/Mac
-    add_library(yolov8 SHARED ${yolo_source})
+    add_library(yolov8 SHARED ${file_source})
 endif()
 
 target_link_libraries(yolov8 PUBLIC ${yolo_dependent_libs})
@@ -78,4 +79,13 @@ target_include_directories(yolov8 PUBLIC
     "$<BUILD_INTERFACE:${yolo_include_dirs}>"
     "$<INSTALL_INTERFACE:include>"
 )
- 
+
+# install 时安装 yolov8 库（.so / .dll / .a）
+install(TARGETS yolov8
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+
+# 安装头文件，便于其他项目链接使用
+install(FILES ${public_include_files} DESTINATION include)
